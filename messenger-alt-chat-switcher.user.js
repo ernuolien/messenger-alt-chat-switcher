@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         FB/Messenger Alt+N 快速切換聊天室 (Thorium 穩健版)
 // @namespace    http://tampermonkey.net/
-// @version      2.0
-// @description  支援 Facebook Messages 與 Messenger，修正輸入法衝突
+// @version      2.1
+// @description  支援 Facebook Messages 與 Messenger，修正輸入法衝突，切換後自動 focus 訊息輸入框
 // @author       Gemini
 // @match        *://*.facebook.com/messages/*
 // @match        *://*.messenger.com/*
@@ -32,6 +32,86 @@
             if (items.length > 0) return items;
         }
         return [];
+    }
+
+    function getMessageInput() {
+        const inputSelectors = [
+            'div[contenteditable="true"][aria-label*="訊息"]',
+            'div[contenteditable="true"][aria-label*="Message"i]',
+            'div[role="textbox"][contenteditable="true"]',
+            'div[contenteditable="true"]'
+        ];
+
+        for (let selector of inputSelectors) {
+            let boxes;
+            try {
+                boxes = Array.from(document.querySelectorAll(selector));
+            } catch (err) {
+                continue; // 舊瀏覽器不支援大小寫不敏感選擇器時跳過
+            }
+
+            const visible = boxes.filter(el => {
+                const r = el.getBoundingClientRect();
+                return r.height > 10 && r.width > 50; // 排除隱藏或過小的元素
+            });
+
+            // 訊息輸入框位於畫面底部，取最下方那一個，避免抓到上方的搜尋框
+            if (visible.length > 0) {
+                return visible.reduce((lowest, el) =>
+                    el.getBoundingClientRect().bottom > lowest.getBoundingClientRect().bottom ? el : lowest
+                );
+            }
+        }
+        return null;
+    }
+
+    // 把游標移到輸入框內容的最後面
+    function moveCaretToEnd(el) {
+        try {
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        } catch (err) {
+            // 輸入框尚未初始化時可能失敗，忽略即可
+        }
+    }
+
+    // 切換聊天室後輸入框會被重建，這裡輪詢等它出現再 focus
+    function focusMessageInput(timeout = 3000, interval = 100) {
+        const deadline = Date.now() + timeout;
+
+        const timer = setInterval(() => {
+            const input = getMessageInput();
+
+            if (input) {
+                input.focus();
+                moveCaretToEnd(input);
+
+                if (document.activeElement === input) {
+                    clearInterval(timer);
+                    console.log('[輸入框] 已 focus 訊息輸入框');
+
+                    // React 重新渲染可能搶走 focus，稍後再補一次
+                    setTimeout(() => {
+                        const latest = getMessageInput();
+                        if (latest && document.activeElement !== latest) {
+                            latest.focus();
+                            moveCaretToEnd(latest);
+                            console.log('[輸入框] 已重新 focus 訊息輸入框');
+                        }
+                    }, 300);
+                    return;
+                }
+            }
+
+            if (Date.now() > deadline) {
+                clearInterval(timer);
+                console.warn('[輸入框] 等待逾時，找不到可 focus 的訊息輸入框');
+            }
+        }, interval);
     }
 
     // Capture 模式攔截
@@ -67,6 +147,9 @@
                     cancelable: true
                 });
                 target.dispatchEvent(clickEvent);
+
+                // 進入聊天室後自動 focus 訊息輸入框
+                focusMessageInput();
 
             } else {
                 console.warn(`找不到第 ${keyNum} 個聊天室`);
