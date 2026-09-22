@@ -15,7 +15,7 @@ A Tampermonkey userscript that lets you jump to the 1st–9th conversation in th
 
 ## Installation
 
-1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser (Chrome / Edge / Thorium / Firefox).
+1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser (Chrome / Edge / Firefox, or any Chromium-based browser).
 2. Open Tampermonkey and choose "Create a new script".
 3. Paste the full contents of [`messenger-alt-chat-switcher.user.js`](messenger-alt-chat-switcher.user.js) and save.
 4. Reload your Messenger or Facebook messages tab.
@@ -29,14 +29,14 @@ A Tampermonkey userscript that lets you jump to the 1st–9th conversation in th
 
 After switching, the script focuses the composer at the bottom of the page (waiting up to 3 seconds), so you can start typing immediately.
 
-Open the browser console (F12) to see log lines such as `[成功觸發] 按下 Alt+3，目前抓到 12 個聊天室` and `[輸入框] 已 focus 訊息輸入框`.
+Open the browser console (F12) to see log lines such as `[hotkey] Alt+3 pressed, 12 chats found` and `[composer] focused the message box`.
 
 ## Troubleshooting
 
 - **Nothing happens**: make sure the script is enabled in Tampermonkey and that the current URL matches the `@match` rules.
 - **Console reports 0 chats found**: the Facebook UI probably changed — adjust `possibleSelectors` inside `getChatItems()`.
 - **Wrong conversation opens**: the sidebar reorders itself as new messages arrive; the index always refers to the list as currently rendered.
-- **The composer isn't focused**: if the console shows `[輸入框] 等待逾時`, loading took longer than 3 seconds or the selectors are stale — raise the `timeout` passed to `focusMessageInput()`, or adjust `inputSelectors` inside `getMessageInput()`.
+- **The composer isn't focused**: if the console shows `[composer] timed out`, loading took longer than 3 seconds or the selectors are stale — raise the `timeout` passed to `focusMessageInput()`, or adjust `inputSelectors` inside `getMessageInput()`.
 - **Focus is stolen right away**: the script already re-focuses 300 ms after the first success; if it still loses focus, increase that `setTimeout` delay.
 
 ## License

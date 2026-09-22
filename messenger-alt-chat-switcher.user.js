@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         FB/Messenger Alt+N 快速切換聊天室 (Thorium 穩健版)
+// @name         FB/Messenger Alt+N Chat Switcher
 // @namespace    http://tampermonkey.net/
 // @version      2.1
-// @description  支援 Facebook Messages 與 Messenger，修正輸入法衝突，切換後自動 focus 訊息輸入框
+// @description  Switch chats with Alt+1..9 on Facebook Messages and Messenger, IME-safe, and focus the composer afterwards
 // @author       Gemini
 // @match        *://*.facebook.com/messages/*
 // @match        *://*.messenger.com/*
@@ -13,9 +13,10 @@
 (function() {
     'use strict';
 
-    console.log('--- 聊天室切換腳本已載入 (Thorium 版) ---');
+    console.log('--- Alt+N chat switcher loaded ---');
 
     function getChatItems() {
+        // Chinese/English aria-labels below are Facebook's own UI strings, not translatable text
         const possibleSelectors = [
             'div[role="navigation"] div[role="row"]',
             'div[role="grid"] div[role="row"]',
@@ -27,7 +28,7 @@
         for (let selector of possibleSelectors) {
             const items = Array.from(document.querySelectorAll(selector)).filter(el => {
                 const r = el.getBoundingClientRect();
-                return r.height > 20 && r.width > 30; // 排除無效的隱藏元素
+                return r.height > 20 && r.width > 30; // Drop hidden or zero-sized elements
             });
             if (items.length > 0) return items;
         }
@@ -35,6 +36,7 @@
     }
 
     function getMessageInput() {
+        // Chinese/English aria-labels below are Facebook's own UI strings, not translatable text
         const inputSelectors = [
             'div[contenteditable="true"][aria-label*="訊息"]',
             'div[contenteditable="true"][aria-label*="Message"i]',
@@ -47,15 +49,16 @@
             try {
                 boxes = Array.from(document.querySelectorAll(selector));
             } catch (err) {
-                continue; // 舊瀏覽器不支援大小寫不敏感選擇器時跳過
+                continue; // Skip selectors the browser rejects (e.g. no case-insensitive attribute support)
             }
 
             const visible = boxes.filter(el => {
                 const r = el.getBoundingClientRect();
-                return r.height > 10 && r.width > 50; // 排除隱藏或過小的元素
+                return r.height > 10 && r.width > 50; // Drop hidden or too-small elements
             });
 
-            // 訊息輸入框位於畫面底部，取最下方那一個，避免抓到上方的搜尋框
+            // The composer sits at the bottom of the page: pick the lowest match
+            // so we never grab the search box above it
             if (visible.length > 0) {
                 return visible.reduce((lowest, el) =>
                     el.getBoundingClientRect().bottom > lowest.getBoundingClientRect().bottom ? el : lowest
@@ -65,7 +68,7 @@
         return null;
     }
 
-    // 把游標移到輸入框內容的最後面
+    // Place the caret at the end of the composer content
     function moveCaretToEnd(el) {
         try {
             const range = document.createRange();
@@ -75,11 +78,11 @@
             sel.removeAllRanges();
             sel.addRange(range);
         } catch (err) {
-            // 輸入框尚未初始化時可能失敗，忽略即可
+            // Can fail while the composer is still initialising; safe to ignore
         }
     }
 
-    // 切換聊天室後輸入框會被重建，這裡輪詢等它出現再 focus
+    // Switching chats rebuilds the composer, so poll until it shows up, then focus it
     function focusMessageInput(timeout = 3000, interval = 100) {
         const deadline = Date.now() + timeout;
 
@@ -92,15 +95,15 @@
 
                 if (document.activeElement === input) {
                     clearInterval(timer);
-                    console.log('[輸入框] 已 focus 訊息輸入框');
+                    console.log('[composer] focused the message box');
 
-                    // React 重新渲染可能搶走 focus，稍後再補一次
+                    // A React re-render may steal focus; re-focus shortly after
                     setTimeout(() => {
                         const latest = getMessageInput();
                         if (latest && document.activeElement !== latest) {
                             latest.focus();
                             moveCaretToEnd(latest);
-                            console.log('[輸入框] 已重新 focus 訊息輸入框');
+                            console.log('[composer] re-focused the message box');
                         }
                     }, 300);
                     return;
@@ -109,15 +112,15 @@
 
             if (Date.now() > deadline) {
                 clearInterval(timer);
-                console.warn('[輸入框] 等待逾時，找不到可 focus 的訊息輸入框');
+                console.warn('[composer] timed out: no message box found to focus');
             }
         }, interval);
     }
 
-    // Capture 模式攔截
+    // Intercept in capture phase, before the page handles the key
     window.addEventListener('keydown', function(e) {
 
-        // 使用 e.code 判斷實體按鍵，不受注音輸入法影響
+        // Use e.code (physical key) so IMEs such as Zhuyin do not interfere
         let keyNum = null;
         if (e.code && e.code.startsWith('Digit')) {
             keyNum = parseInt(e.code.replace('Digit', ''));
@@ -125,22 +128,22 @@
             keyNum = parseInt(e.code.replace('Numpad', ''));
         }
 
-        // 判斷：按下 Alt，且按鍵是數字 1~9
+        // Trigger on Alt plus a digit from 1 to 9
         if (e.altKey && keyNum >= 1 && keyNum <= 9 && !e.ctrlKey && !e.shiftKey) {
 
-            // 攔截預設行為
+            // Block the browser/page default action
             e.preventDefault();
             e.stopImmediatePropagation();
 
             const index = keyNum - 1;
             const items = getChatItems();
 
-            console.log(`[成功觸發] 按下 Alt+${keyNum}，目前抓到 ${items.length} 個聊天室`);
+            console.log(`[hotkey] Alt+${keyNum} pressed, ${items.length} chats found`);
 
             if (items[index]) {
                 const target = items[index].querySelector('a, [role="link"]') || items[index];
 
-                // 模擬真實滑鼠點擊
+                // Simulate a real mouse click
                 const clickEvent = new MouseEvent('click', {
                     view: window,
                     bubbles: true,
@@ -148,11 +151,11 @@
                 });
                 target.dispatchEvent(clickEvent);
 
-                // 進入聊天室後自動 focus 訊息輸入框
+                // Focus the composer once the chat has opened
                 focusMessageInput();
 
             } else {
-                console.warn(`找不到第 ${keyNum} 個聊天室`);
+                console.warn(`[hotkey] chat #${keyNum} not found`);
             }
         }
     }, true);
