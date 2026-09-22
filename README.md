@@ -1,42 +1,44 @@
-# FB/Messenger Alt+N 快速切換聊天室
+# FB/Messenger Alt+N Chat Switcher
 
-一個 Tampermonkey 使用者腳本，在 Facebook Messages 與 Messenger 網頁版用 `Alt + 1` ~ `Alt + 9` 快速切換左側聊天室清單的第 1~9 個對話，並自動把游標移到訊息輸入框，按完快捷鍵就能直接打字。
+[繁體中文說明](README.zh-TW.md)
 
-## 特色
+A Tampermonkey userscript that lets you jump to the 1st–9th conversation in the sidebar of Facebook Messages and Messenger with `Alt + 1` … `Alt + 9`, then automatically focuses the message box so you can start typing right away.
 
-- 同時支援 `facebook.com/messages/*` 與 `messenger.com/*`
-- 切換後自動 focus 訊息輸入框，游標落在既有內容的最後面
-- 以 `event.code`（實體按鍵）判斷數字鍵，不受注音等輸入法影響
-- 使用 capture 模式攔截按鍵，避免與網站本身的快捷鍵衝突
-- 多組選擇器後備機制，介面改版時仍有機會抓到聊天室清單
-- 支援主鍵盤數字鍵與數字鍵盤（Numpad）
+## Features
 
-## 安裝
+- Works on both `facebook.com/messages/*` and `messenger.com/*`
+- Focuses the composer after switching, with the caret placed at the end of any existing draft
+- Detects digits via `event.code` (physical keys), so IMEs such as Zhuyin/Pinyin don't break the shortcut
+- Intercepts the key in capture phase to avoid clashing with the site's own shortcuts
+- Multiple fallback selectors, so the chat list is still found after UI changes
+- Supports both the number row and the numeric keypad
 
-1. 在瀏覽器安裝 [Tampermonkey](https://www.tampermonkey.net/)（Chrome / Edge / Thorium / Firefox 皆可）。
-2. 開啟 Tampermonkey 的「新增腳本」。
-3. 將 [`messenger-alt-chat-switcher.user.js`](messenger-alt-chat-switcher.user.js) 的內容全部貼上並儲存。
-4. 重新整理 Messenger 或 Facebook 訊息頁面。
+## Installation
 
-## 使用方式
+1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser (Chrome / Edge / Thorium / Firefox).
+2. Open Tampermonkey and choose "Create a new script".
+3. Paste the full contents of [`messenger-alt-chat-switcher.user.js`](messenger-alt-chat-switcher.user.js) and save.
+4. Reload your Messenger or Facebook messages tab.
 
-| 按鍵 | 動作 |
+## Usage
+
+| Shortcut | Action |
 | --- | --- |
-| `Alt + 1` | 切換到清單中第 1 個聊天室 |
-| `Alt + 2` ~ `Alt + 9` | 依序切換到第 2 ~ 9 個聊天室 |
+| `Alt + 1` | Open the 1st chat in the list |
+| `Alt + 2` – `Alt + 9` | Open the 2nd – 9th chat in the list |
 
-切換完成後腳本會自動 focus 底部的訊息輸入框（最多等待 3 秒），可直接開始打字。
+After switching, the script focuses the composer at the bottom of the page (waiting up to 3 seconds), so you can start typing immediately.
 
-按下後可開啟瀏覽器主控台（F12）查看紀錄，例如 `[成功觸發] 按下 Alt+3，目前抓到 12 個聊天室` 與 `[輸入框] 已 focus 訊息輸入框`。
+Open the browser console (F12) to see log lines such as `[成功觸發] 按下 Alt+3，目前抓到 12 個聊天室` and `[輸入框] 已 focus 訊息輸入框`.
 
-## 疑難排解
+## Troubleshooting
 
-- **完全沒反應**：確認 Tampermonkey 已啟用該腳本，且目前網址符合 `@match` 規則。
-- **主控台顯示抓到 0 個聊天室**：Facebook 介面可能改版，請調整 `getChatItems()` 內的 `possibleSelectors`。
-- **切換到錯誤的對話**：清單順序會隨新訊息變動，順序以畫面當下的清單為準。
-- **沒有自動 focus 輸入框**：主控台若出現 `[輸入框] 等待逾時`，代表載入超過 3 秒或選擇器失效；可調大 `focusMessageInput()` 的 `timeout`，或調整 `getMessageInput()` 內的 `inputSelectors`。
-- **游標立刻被搶走**：腳本已在 focus 成功後 300 毫秒再補一次；若仍被搶走，可把該 `setTimeout` 的延遲調長。
+- **Nothing happens**: make sure the script is enabled in Tampermonkey and that the current URL matches the `@match` rules.
+- **Console reports 0 chats found**: the Facebook UI probably changed — adjust `possibleSelectors` inside `getChatItems()`.
+- **Wrong conversation opens**: the sidebar reorders itself as new messages arrive; the index always refers to the list as currently rendered.
+- **The composer isn't focused**: if the console shows `[輸入框] 等待逾時`, loading took longer than 3 seconds or the selectors are stale — raise the `timeout` passed to `focusMessageInput()`, or adjust `inputSelectors` inside `getMessageInput()`.
+- **Focus is stolen right away**: the script already re-focuses 300 ms after the first success; if it still loses focus, increase that `setTimeout` delay.
 
-## 授權
+## License
 
-見 [LICENSE](LICENSE)。
+See [LICENSE](LICENSE).
