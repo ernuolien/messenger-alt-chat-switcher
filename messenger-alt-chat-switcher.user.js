@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      2.1
 // @description  Switch chats with Alt+1..9 on Facebook Messages and Messenger, IME-safe, and focus the composer afterwards
-// @author       Gemini
+// @author       ernuolien
 // @match        *://*.facebook.com/messages/*
 // @match        *://*.messenger.com/*
 // @grant        none
