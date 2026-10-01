@@ -36,9 +36,17 @@ To override the detection, edit `HOTKEY_MODE` at the top of the script:
 ## Installation
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser (Chrome / Edge / Firefox, or any Chromium-based browser).
-2. Open Tampermonkey and choose "Create a new script".
-3. Paste the full contents of [`messenger-alt-chat-switcher.user.js`](messenger-alt-chat-switcher.user.js) and save.
-4. Reload your Messenger or Facebook messages tab.
+2. Open [the raw script](https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/messenger-alt-chat-switcher.user.js) — Tampermonkey shows its install page. Confirm the install.
+3. Reload your Messenger or Facebook messages tab.
+
+Installing from that URL also enables automatic updates: the script declares
+`@updateURL` / `@downloadURL`, so Tampermonkey periodically checks `main` and picks up
+any version with a higher `@version`. (Set the script's update behaviour in Tampermonkey
+if you would rather be asked first.)
+
+Manual alternative: create a new script in Tampermonkey and paste the contents of
+[`messenger-alt-chat-switcher.user.js`](messenger-alt-chat-switcher.user.js). A copy
+installed this way is not linked to the repository and will not update itself.
 
 ## Usage
 

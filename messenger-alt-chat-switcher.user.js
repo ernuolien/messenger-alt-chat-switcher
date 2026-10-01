@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         FB/Messenger Chat Switcher
 // @namespace    https://github.com/ernuolien/messenger-alt-chat-switcher
-// @version      3.0.0
+// @version      3.1.0
 // @description  Switch Facebook Messages / Messenger chats with Alt(+Shift)+1-9 and Alt(+Shift)+Up/Down, then focus the composer
 // @author       ernuolien
 // @match        *://*.facebook.com/messages
@@ -9,6 +9,9 @@
 // @match        *://*.messenger.com/*
 // @grant        none
 // @run-at       document-idle
+// @homepageURL  https://github.com/ernuolien/messenger-alt-chat-switcher
+// @downloadURL  https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/messenger-alt-chat-switcher.user.js
+// @updateURL    https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/messenger-alt-chat-switcher.user.js
 // ==/UserScript==
 
 (function () {

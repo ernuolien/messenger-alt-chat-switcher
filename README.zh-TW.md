@@ -36,9 +36,16 @@
 ## 安裝
 
 1. 在瀏覽器安裝 [Tampermonkey](https://www.tampermonkey.net/)（Chrome / Edge / Firefox 或其他 Chromium 系瀏覽器皆可）。
-2. 開啟 Tampermonkey 的「新增腳本」。
-3. 將 [`messenger-alt-chat-switcher.user.js`](messenger-alt-chat-switcher.user.js) 的內容全部貼上並儲存。
-4. 重新整理 Messenger 或 Facebook 訊息頁面。
+2. 開啟[腳本的 raw 連結](https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/messenger-alt-chat-switcher.user.js)，Tampermonkey 會顯示安裝頁面，確認安裝即可。
+3. 重新整理 Messenger 或 Facebook 訊息頁面。
+
+從這個網址安裝才會啟用自動更新：腳本有宣告 `@updateURL` / `@downloadURL`，
+Tampermonkey 會定期檢查 `main` 上的版本，只要 `@version` 比本機新就會更新。
+（若希望更新前先問你，可在 Tampermonkey 裡調整該腳本的更新設定。）
+
+手動安裝方式：在 Tampermonkey 新增腳本，貼上
+[`messenger-alt-chat-switcher.user.js`](messenger-alt-chat-switcher.user.js) 的內容。
+這樣安裝的副本與倉庫沒有關聯，不會自動更新。
 
 ## 使用方式
 
