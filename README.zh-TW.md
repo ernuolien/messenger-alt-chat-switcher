@@ -1,5 +1,7 @@
 # FB/Messenger 聊天室快捷切換
 
+[![點我安裝](https://img.shields.io/badge/Install-Tampermonkey-00485B?style=for-the-badge&logo=tampermonkey&logoColor=white)](https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/messenger-alt-chat-switcher.user.js)
+
 [English README](README.md)
 
 一個給 Facebook Messages 與 Messenger 的 Tampermonkey 使用者腳本：用數字鍵跳到左側清單的第 1~9 個聊天室，用方向鍵切換上一個／下一個聊天室，切換後自動聚焦到訊息輸入框，按完快捷鍵就能直接打字。
@@ -36,7 +38,7 @@
 ## 安裝
 
 1. 在瀏覽器安裝 [Tampermonkey](https://www.tampermonkey.net/)（Chrome / Edge / Firefox 或其他 Chromium 系瀏覽器皆可）。
-2. 開啟[腳本的 raw 連結](https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/messenger-alt-chat-switcher.user.js)，Tampermonkey 會顯示安裝頁面，確認安裝即可。
+2. 點上方的安裝按鈕，或開啟[腳本的 raw 連結](https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/messenger-alt-chat-switcher.user.js)，Tampermonkey 會顯示安裝頁面，確認安裝即可。
 3. 重新整理 Messenger 或 Facebook 訊息頁面。
 
 從這個網址安裝才會啟用自動更新：腳本有宣告 `@updateURL` / `@downloadURL`，

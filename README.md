@@ -1,5 +1,7 @@
 # FB/Messenger Chat Switcher
 
+[![Install with Tampermonkey](https://img.shields.io/badge/Install-Tampermonkey-00485B?style=for-the-badge&logo=tampermonkey&logoColor=white)](https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/messenger-alt-chat-switcher.user.js)
+
 [繁體中文說明](README.zh-TW.md)
 
 A Tampermonkey userscript for Facebook Messages and Messenger: jump to the 1st–9th conversation in the sidebar with a digit, step through conversations with the arrow keys, and have the message box focused automatically so you can start typing right away.
@@ -36,7 +38,7 @@ To override the detection, edit `HOTKEY_MODE` at the top of the script:
 ## Installation
 
 1. Install [Tampermonkey](https://www.tampermonkey.net/) in your browser (Chrome / Edge / Firefox, or any Chromium-based browser).
-2. Open [the raw script](https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/messenger-alt-chat-switcher.user.js) — Tampermonkey shows its install page. Confirm the install.
+2. Click the install button above, or open [the raw script](https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/messenger-alt-chat-switcher.user.js) — Tampermonkey shows its install page. Confirm the install.
 3. Reload your Messenger or Facebook messages tab.
 
 Installing from that URL also enables automatic updates: the script declares
