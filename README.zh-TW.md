@@ -83,6 +83,24 @@ Tampermonkey 會定期檢查 `main` 上的版本，只要 `@version` 比本機�
 - **沒有自動 focus 輸入框**：可調大 `FOCUS_TIMEOUT`，或調整 `findMessageInput()` 的選擇器。
 - **`Alt + ↑/↓` 從錯誤的位置開始**：代表偵測不到目前的聊天室，腳本會從清單第一個開始；偵測邏輯在 `getCurrentChatIndex()`。
 
+## 發佈到 Greasy Fork
+
+Greasy Fork 會發佈自己的更新網址，所以上架的版本不能帶著指向 GitHub 的
+`@downloadURL` / `@updateURL`，否則從 Greasy Fork 安裝的使用者之後會變成從 GitHub
+更新。那份副本是用腳本產生的，不用手動維護：
+
+```sh
+node tools/build-greasyfork.mjs           # 產生 dist/messenger-alt-chat-switcher.greasyfork.user.js
+node tools/build-greasyfork.mjs --check   # 產生的副本過期時回傳錯誤
+```
+
+- Greasy Fork 的 script sync 請指向產生出來的檔案：
+  `https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/dist/messenger-alt-chat-switcher.greasyfork.user.js`
+- [`docs/greasyfork-description.md`](docs/greasyfork-description.md) 內含可直接貼到
+  *Additional info* 欄位的說明文字（英文與繁體中文各一份）。
+- 每次改動都要調高原始檔的 `@version` 再重新產生 — Greasy Fork 與 Tampermonkey 都是
+  比較這個數字來決定要不要更新。
+
 ## 授權
 
 見 [LICENSE](LICENSE)。

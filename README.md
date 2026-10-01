@@ -84,6 +84,25 @@ All settings live in the `// ===== Settings =====` block at the top of the scrip
 - **The composer isn't focused**: raise `FOCUS_TIMEOUT`, or adjust the selectors in `findMessageInput()`.
 - **`Alt + ↑/↓` starts from the wrong place**: the active conversation could not be detected, so the script starts from the top of the list. `getCurrentChatIndex()` is where that detection lives.
 
+## Publishing to Greasy Fork
+
+Greasy Fork serves its own update URLs, so the published copy must not carry the
+`@downloadURL` / `@updateURL` keys pointing at GitHub — otherwise installs from Greasy
+Fork would quietly update from GitHub instead. That copy is generated rather than
+hand-maintained:
+
+```sh
+node tools/build-greasyfork.mjs           # write dist/messenger-alt-chat-switcher.greasyfork.user.js
+node tools/build-greasyfork.mjs --check   # fail if the generated copy is out of date
+```
+
+- Point Greasy Fork's script sync at the generated file:
+  `https://raw.githubusercontent.com/ernuolien/messenger-alt-chat-switcher/main/dist/messenger-alt-chat-switcher.greasyfork.user.js`
+- [`docs/greasyfork-description.md`](docs/greasyfork-description.md) holds the listing
+  text (English and Traditional Chinese) ready to paste into the *Additional info* field.
+- Bump `@version` in the source for every change, then re-run the build — Greasy Fork
+  and Tampermonkey both decide whether to update by comparing that number.
+
 ## License
 
 See [LICENSE](LICENSE).
